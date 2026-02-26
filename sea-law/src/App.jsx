@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import daiNamImg from './assets/dai_nam.jpg';
+import anNamImg from './assets/an_nam.jpg';
+import banDoImg from './assets/ban_do.jpg';
+
 import { 
   Anchor, 
   BookOpen, 
@@ -17,6 +21,15 @@ import {
   History,
   Navigation
 } from 'lucide-react';
+import MapView from './components/MapView'
+import { islandsGeo } from './data/islands'
+
+const footerLinks = {
+  foreign: 'https://www.mofa.gov.vn',
+  justice: 'https://moj.gov.vn',
+  border: 'https://mofa.gov.vn/vi/chi-tiet-cctc/tochuc/uy-ban-bien-gioi-quoc-gia-26.html',
+  coastguard: 'https://canhsatbien.vn/'
+};
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -82,10 +95,10 @@ const App = () => {
             </h2>
             <div className="grid gap-6">
               {[
-                { title: "Luật Biển Việt Nam 2012", date: "21/06/2012", desc: "Văn bản pháp lý cơ bản nhất của Việt Nam về biển đảo.", type: "Trong nước" },
-                { title: "Công ước UNCLOS 1982", date: "10/12/1982", desc: "Công ước Liên Hợp Quốc về Luật Biển - Cơ sở pháp lý quốc tế.", type: "Quốc tế" },
-                { title: "Tuyên bố DOC 2002", date: "04/11/2002", desc: "Tuyên bố về ứng xử của các bên ở Biển Đông giữa ASEAN và Trung Quốc.", type: "Quốc tế" },
-                { title: "Nghị định 61/2019/NĐ-CP", date: "10/07/2019", desc: "Quy định chi tiết một số điều và biện pháp thi hành Luật Cảnh sát biển Việt Nam.", type: "Trong nước" }
+                { title: "Luật Biển Việt Nam 2012", date: "21/06/2012", desc: "Văn bản pháp lý cơ bản nhất của Việt Nam về biển đảo.", type: "Trong nước", url: "https://thuvienphapluat.vn/van-ban/Giao-thong-Van-tai/Luat-bien-Viet-Nam-2012-143494.aspx" },
+                { title: "Công ước UNCLOS 1982", date: "10/12/1982", desc: "Công ước Liên Hợp Quốc về Luật Biển - Cơ sở pháp lý quốc tế.", type: "Quốc tế", url: "https://vmrcc.gov.vn/thong-tin-phap-luat/cong-uoc-lien-hiep-quoc-ve-luat-bien-unclos-1982-250.html" },
+                { title: "Tuyên bố DOC 2002", date: "04/11/2002", desc: "Tuyên bố về ứng xử của các bên ở Biển Đông giữa ASEAN và Trung Quốc.", type: "Quốc tế", url: "https://nghiencuubiendong.vn/tuyen-bo-ve-cach-ung-xu-cua-cac-ben-o-bien-dong.5989.adata" },
+                { title: "Nghị định 61/2019/NĐ-CP", date: "10/07/2019", desc: "Quy định chi tiết một số điều và biện pháp thi hành Luật Cảnh sát biển Việt Nam.", type: "Trong nước", url: "https://thuvienphapluat.vn/van-ban/Bo-may-hanh-chinh/Nghi-dinh-61-2019-ND-CP-huong-dan-Luat-Canh-sat-bien-Viet-Nam-418521.aspx" }
               ].map((doc, i) => (
                 <div key={i} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
@@ -97,8 +110,12 @@ const App = () => {
                     <p className="text-slate-400 text-xs mt-1">Ban hành: {doc.date}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100"><Download size={20}/></button>
-                    <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100"><ExternalLink size={20}/></button>
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100 flex items-center">
+                      <ExternalLink size={20} />
+                    </a>
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100 flex items-center">
+                      <Download size={20} />
+                    </a>
                   </div>
                 </div>
               ))}
@@ -112,13 +129,15 @@ const App = () => {
               <Navigation /> Bản đồ chủ quyền trực quan
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 bg-slate-200 aspect-video rounded-2xl relative overflow-hidden shadow-inner flex items-center justify-center border-4 border-white">
-                 <img src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&q=80&w=1000" alt="Bản đồ giả lập" className="absolute inset-0 w-full h-full object-cover opacity-50" />
-                 <div className="relative z-10 text-center p-6 bg-white/80 backdrop-blur rounded-xl max-w-md border border-white">
+                <div className="lg:col-span-2 bg-slate-200 aspect-video rounded-2xl relative overflow-hidden shadow-inner flex items-center justify-center border-4 border-white">
+                   <div className="absolute inset-0">
+                     <MapView geojson={islandsGeo} />
+                   </div>
+                  <div className="relative z-10 text-center p-6 bg-white/80 backdrop-blur rounded-xl max-w-md border border-white">
                     <MapIcon size={48} className="mx-auto text-blue-600 mb-4" />
                     <p className="font-medium text-slate-800">Hệ thống bản đồ tương tác đang tải dữ liệu tọa độ...</p>
                     <p className="text-sm text-slate-500 mt-2">Dữ liệu bao gồm: Đường cơ sở, Lãnh hải 12 hải lý, Vùng đặc quyền kinh tế (EEZ) và Thềm lục địa.</p>
-                 </div>
+                  </div>
                  {/* Marker giả lập */}
                  <div className="absolute top-1/3 right-1/4 group cursor-pointer">
                     <div className="w-4 h-4 bg-red-600 rounded-full animate-ping absolute" />
@@ -152,19 +171,28 @@ const App = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                { title: "Đại Nam Thực Lục", time: "Thế kỷ 19", desc: "Ghi chép chính sử về việc triều đình nhà Nguyễn cử đội Hoàng Sa đi thực thi chủ quyền." },
-                { title: "Bản đồ An Nam Đại Quốc Họa Đồ", time: "Năm 1838", desc: "Bản đồ của Giám mục Taberd vẽ rõ 'Paracel seu Cát Vàng' thuộc lãnh thổ Việt Nam." },
-                { title: "Bộ sưu tập bản đồ phương Tây", time: "Thế kỷ 16-18", desc: "Hàng trăm bản đồ cổ của các nhà hàng hải Hà Lan, Bồ Đào Nha khẳng định chủ quyền." }
+                { title: "Đại Nam Thực Lục", time: "Thế kỷ 19", desc: "Ghi chép chính sử về việc triều đình nhà Nguyễn cử đội Hoàng Sa đi thực thi chủ quyền.", url: "https://www.thuvienhoasen.org/a37128/dai-nam-thuc-luc-toan-tap" },
+                { title: "Bản đồ An Nam Đại Quốc Họa Đồ", time: "Năm 1838", desc: "Bản đồ của Giám mục Taberd vẽ rõ 'Paracel seu Cát Vàng' thuộc lãnh thổ Việt Nam.", url: "https://nghiencuulichsu.com/2014/09/29/nhan-xet-ve-an-nam-dai-quoc-hoa-do/" },
+                { title: "Bộ sưu tập bản đồ phương Tây", time: "Thế kỷ 16-18", desc: "Hàng trăm bản đồ cổ của các nhà hàng hải Hà Lan, Bồ Đào Nha khẳng định chủ quyền.", url: "https://infonet.vietnamnet.vn/phat-hien-56-ban-do-co-phuong-tay-ve-hoang-sa-cua-viet-nam-122373.html" }
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg transition-all group">
                   <div className="h-48 bg-slate-200 relative overflow-hidden">
-                    <img src={`https://images.unsplash.com/photo-1524850041227-615c8e4fb320?auto=format&fit=crop&q=80&w=600&sig=${i}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.title}/>
+                    <img src={
+                      i === 0 ? daiNamImg : (i === 1 ? anNamImg : (i === 2 ? banDoImg : `https://mocban.vn/bo-van-khac-su-hoc-dai-nam-thuc-luc-nhung-dau-an-con-mai/${i}`))
+                    } className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.title}/>
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-blue-800">{item.time}</div>
                   </div>
                   <div className="p-6">
                     <h3 className="text-lg font-bold mb-2">{item.title}</h3>
                     <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
-                    <button className="mt-4 text-blue-600 font-bold text-xs uppercase tracking-widest hover:underline">Khám phá tư liệu</button>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-block text-blue-600 font-bold text-xs uppercase tracking-widest hover:underline"
+                    >
+                      Khám phá tư liệu
+                    </a>
                   </div>
                 </div>
               ))}
@@ -245,8 +273,8 @@ const App = () => {
                 <Anchor size={28} />
               </div>
               <div>
-                <span className="font-black text-2xl tracking-tighter text-blue-900 block leading-none">BOMBACLATT</span>
-                <span className="text-[10px] font-bold text-blue-500 tracking-widest uppercase">36 MÃI ĐỈNHH</span>
+                <span className="font-black text-2xl tracking-tighter text-blue-900 block leading-none">OceanMind</span>
+                <span className="text-[10px] font-bold text-blue-500 tracking-widest uppercase">Website luật biển Việt Nam và Chatbot AI</span>
               </div>
             </div>
             
@@ -292,7 +320,7 @@ const App = () => {
               <span className="font-bold text-xl uppercase tracking-tighter">Luật Biển Việt Nam</span>
             </div>
             <p className="max-w-md leading-relaxed">
-              Cổng thông tin phi lợi nhuận hướng tới việc nâng cao nhận thức của cộng đồng về chủ quyền biển đảo, hỗ trợ ngư dân và thực thi pháp luật trên biển.
+              Đây là dự án thuộc môn Lịch sử do nhóm học sinh lớp 12A7 thực hiện, với mục tiêu nghiên cứu và lan tỏa hiểu biết về chủ quyền biển đảo Việt Nam, cũng như vai trò của cộng đồng ngư dân và lực lượng thực thi pháp luật trên biển.
             </p>
             <div className="mt-8 flex gap-4">
                 <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer"><Info size={18} /></div>
@@ -302,10 +330,26 @@ const App = () => {
           <div>
             <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-[0.2em]">Cơ quan chủ quản</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">Bộ Ngoại giao <ExternalLink size={12}/></a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">Bộ Tư pháp <ExternalLink size={12}/></a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">Ủy ban Biên giới quốc gia</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">Cảnh sát biển Việt Nam</a></li>
+              <li>
+                <a href={footerLinks.foreign} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors flex items-center gap-2">
+                  Bộ Ngoại giao <ExternalLink size={12}/>
+                </a>
+              </li>
+              <li>
+                <a href={footerLinks.justice} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors flex items-center gap-2">
+                  Bộ Tư pháp <ExternalLink size={12}/>
+                </a>
+              </li>
+              <li>
+                <a href={footerLinks.border} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors flex items-center gap-2">
+                  Ủy ban Biên giới quốc gia <ExternalLink size={12}/>
+                </a>
+              </li>
+              <li>
+                <a href={footerLinks.coastguard} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors flex items-center gap-2">
+                  Cảnh sát biển Việt Nam <ExternalLink size={12}/>
+                </a>
+              </li>
             </ul>
           </div>
           <div>
@@ -318,7 +362,7 @@ const App = () => {
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-800 text-center text-xs text-slate-600">
-            &copy; {new Date().getFullYear()} Sea Law Vietnam Project. Bản quyền thuộc về cộng đồng yêu biển đảo Việt Nam.
+            &copy; {new Date().getFullYear()} Dự án Lịch Sử - 12A7. Bản quyền thuộc về cộng đồng yêu biển đảo Việt Nam.
         </div>
       </footer>
 
@@ -332,7 +376,7 @@ const App = () => {
                 <MessageCircle size={22} />
               </div>
               <div>
-                <p className="font-bold text-sm leading-none mb-1">Trợ lý Luật Biển AI</p>
+                <p className="font-bold text-sm leading-none mb-1">O-Mind ChatbotAI</p>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   <span className="text-[10px] text-blue-100 font-medium tracking-wide">TRỰC TUYẾN</span>
