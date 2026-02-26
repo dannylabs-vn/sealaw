@@ -25,6 +25,8 @@ const App = () => {
     { role: 'bot', content: 'Xin chào! Tôi là Trợ lý Luật Biển Việt Nam. Bạn cần tra cứu thông tin gì về quy định biển đảo không?' }
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -35,24 +37,38 @@ const App = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = () => {
-    if (!input.trim()) return;
-    const userMsg = { role: 'user', content: input };
+  const handleSendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+    const userMessage = input.trim();
+    const userMsg = { role: 'user', content: userMessage };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+    setIsLoading(true);
 
-    setTimeout(() => {
-      let response = "Xin lỗi, tôi chưa tìm thấy thông tin cụ thể này trong cơ sở dữ liệu luật. Bạn có thể hỏi về 'Lãnh hải', 'Vùng đặc quyền kinh tế' hoặc 'Quần đảo Hoàng Sa'.";
-      const lowInput = input.toLowerCase();
-      if (lowInput.includes('luật biển')) {
-        response = "Luật Biển Việt Nam 2012 gồm 7 chương, 55 điều, quy định về đường cơ sở, lãnh hải, vùng tiếp giáp, vùng đặc quyền kinh tế và thềm lục địa.";
-      } else if (lowInput.includes('hoàng sa') || lowInput.includes('trường sa')) {
-        response = "Việt Nam có đầy đủ bằng chứng lịch sử và cơ sở pháp lý khẳng định chủ quyền đối với Hoàng Sa và Trường Sa phù hợp với luật pháp quốc tế, đặc biệt là UNCLOS 1982.";
-      } else if (lowInput.includes('unclos')) {
-        response = "UNCLOS 1982 là Công ước Liên Hợp Quốc về Luật Biển, được coi là 'Hiến pháp của Đại dương', xác lập khuôn khổ pháp lý toàn cầu cho mọi hoạt động trên biển.";
-      }
-      setMessages(prev => [...prev, { role: 'bot', content: response }]);
-    }, 800);
+    try {
+      const res = await fetch("https://bright-thankful-malamute.ngrok-free.app/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMessage,
+          history: chatHistory,
+          topic: null
+        })
+      });
+
+      const data = await res.json();
+      const botResponse = data.reply || data.response || data.message || data.answer || "Xin lỗi, tôi không thể xử lý yêu cầu này.";
+
+      setChatHistory(prev => [...prev,
+        { role: 'user', content: userMessage },
+        { role: 'assistant', content: botResponse }
+      ]);
+      setMessages(prev => [...prev, { role: 'bot', content: botResponse }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'bot', content: "Xin lỗi, đã xảy ra lỗi kết nối. Vui lòng thử lại sau." }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Các trang nội dung
@@ -333,31 +349,42 @@ const App = () => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
-                  msg.role === 'user' 
-                  ? 'bg-blue-600 text-white rounded-tr-none' 
+                  msg.role === 'user'
+                  ? 'bg-blue-600 text-white rounded-tr-none'
                   : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
                 }`}>
                   {msg.content}
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-none p-3.5 shadow-sm flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                </div>
+              </div>
+            )}
             <div ref={chatEndRef} />
           </div>
 
           {/* Input */}
           <div className="p-4 bg-white border-t border-slate-100">
             <div className="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Nhập câu hỏi tra cứu luật..." 
-                className="flex-1 bg-transparent px-3 py-2 outline-none text-sm placeholder:text-slate-400"
+                placeholder={isLoading ? "Đang xử lý..." : "Nhập câu hỏi tra cứu luật..."}
+                disabled={isLoading}
+                className="flex-1 bg-transparent px-3 py-2 outline-none text-sm placeholder:text-slate-400 disabled:opacity-50"
               />
-              <button 
+              <button
                 onClick={handleSendMessage}
-                className="bg-blue-600 text-white p-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
+                disabled={isLoading}
+                className="bg-blue-600 text-white p-2.5 rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send size={18} />
               </button>
