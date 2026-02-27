@@ -50,7 +50,21 @@ const App = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
+  // Helper function to check if response is likely truncated
+  const isResponseTruncated = (text) => {
+    if (!text) return false;
+    // Check for incomplete sentences (ends with incomplete word or unclosed parenthesis)
+    const incompletePhrases = [
+      /\(\s*$/, // ends with unclosed (
+      /hoặc\s*$/, // ends with hoặc
+      /\s+or\s*$/, // ends with or
+      /[,;]\s*$/, // ends with comma or semicolon
+      /\w+\(\s*$/, // ends with word( 
+    ];
+    return incompletePhrases.some(pattern => pattern.test(text.trim()));
+  };
+
+  const handleSendMessage = async (retryCount = 0) => {
     if (!input.trim() || isLoading) return;
     const userMessage = input.trim();
     const userMsg = { role: 'user', content: userMessage };
@@ -59,18 +73,48 @@ const App = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch("https://bright-thankful-malamute.ngrok-free.app/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userMessage,
-          history: chatHistory,
-          topic: null
-        })
-      });
+      let botResponse = null;
+      let attempts = 0;
+      const maxAttempts = 3;
 
-      const data = await res.json();
-      const botResponse = data.reply || data.response || data.message || data.answer || "Xin lỗi, tôi không thể xử lý yêu cầu này.";
+      // Retry mechanism for truncated responses
+      while (attempts < maxAttempts && !botResponse) {
+        const res = await fetch("https://bright-thankful-malamute.ngrok-free.app/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userMessage,
+            history: chatHistory,
+            topic: null
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error(`API returned status ${res.status}`);
+        }
+
+        const data = await res.json();
+        const response = data.reply || data.response || data.message || data.answer || "";
+
+        // Validate response is not empty and not truncated
+        if (response && response.trim().length > 0 && !isResponseTruncated(response)) {
+          botResponse = response;
+        } else if (response && response.trim().length > 50) {
+          // If response is long enough but seems truncated, still use it but warn user
+          botResponse = response + "\n\n⚠️ *Lưu ý: Phản hồi có thể không đầy đủ. Vui lòng gửi lại câu hỏi để nhận câu trả lời chi tiết hơn.*";
+        } else if (attempts === maxAttempts - 1) {
+          botResponse = "Xin lỗi, máy chủ không thể xử lý yêu cầu này lúc này. Vui lòng thử lại sau hoặc hỏi câu hỏi khác.";
+        }
+
+        attempts++;
+        
+        // Small delay before retry
+        if (!botResponse && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+
+      botResponse = botResponse || "Xin lỗi, tôi không thể xử lý yêu cầu này.";
 
       setChatHistory(prev => [...prev,
         { role: 'user', content: userMessage },
@@ -78,7 +122,8 @@ const App = () => {
       ]);
       setMessages(prev => [...prev, { role: 'bot', content: botResponse }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'bot', content: "Xin lỗi, đã xảy ra lỗi kết nối. Vui lòng thử lại sau." }]);
+      console.error('Chat Error:', err);
+      setMessages(prev => [...prev, { role: 'bot', content: `Xin lỗi, đã xảy ra lỗi: ${err.message}. Vui lòng kiểm tra kết nối mạng và thử lại.` }]);
     } finally {
       setIsLoading(false);
     }
@@ -392,12 +437,24 @@ const App = () => {
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 shadow-inner">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
+                <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm whitespace-pre-wrap break-words ${
                   msg.role === 'user'
                   ? 'bg-blue-600 text-white rounded-tr-none'
                   : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
                 }`}>
-                  {msg.content}
+                  {/* Parse and format warning messages */}
+                  {msg.content && msg.content.includes('⚠️') ? (
+                    <div>
+                      {msg.content.split('⚠️').map((part, idx) => (
+                        <div key={idx}>
+                          {idx > 0 && <div className="text-yellow-600 font-semibold mt-2 italic">⚠️ {part.trim()}</div>}
+                          {idx === 0 && part}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}
