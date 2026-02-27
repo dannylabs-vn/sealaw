@@ -24,6 +24,77 @@ import {
 import MapView from './components/MapView'
 import { islandsGeo } from './data/islands'
 
+// Markdown parser component
+const MarkdownMessage = ({ content }) => {
+  // Helper function to parse inline formatting (bold, italic, etc.)
+  const parseInlineFormatting = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    // Split by **bold** pattern
+    const boldParts = text.split(/(\*\*[^*]+\*\*)/);
+    
+    return boldParts.map((part, idx) => {
+      // Check if this part is bold
+      if (part.match(/^\*\*[^*]+\*\*$/)) {
+        const content = part.slice(2, -2);
+        return <strong key={`bold-${idx}`}>{content}</strong>;
+      }
+      return part;
+    });
+  };
+
+  const parseMarkdown = (text) => {
+    const lines = text.split('\n');
+    const result = [];
+
+    lines.forEach((line, lineIdx) => {
+      // Skip empty lines but add spacing
+      if (!line || !line.trim()) {
+        result.push(<div key={`empty-${lineIdx}`} className="h-1"></div>);
+        return;
+      }
+
+      // Check for headings (#, ##, ###, etc.)
+      const headingMatch = line.match(/^(#+)\s+(.+)$/);
+      if (headingMatch) {
+        const level = headingMatch[1].length;
+        const headingContent = headingMatch[2];
+        result.push(
+          <div key={`heading-${lineIdx}`} className={`font-bold mt-3 mb-2 ${
+            level === 1 ? 'text-lg' : level === 2 ? 'text-base' : 'text-sm'
+          }`}>
+            {parseInlineFormatting(headingContent)}
+          </div>
+        );
+        return;
+      }
+
+      // Check for bullet points (* or - at start of line)
+      const bulletMatch = line.match(/^[-*]\s+(.+)$/);
+      if (bulletMatch) {
+        result.push(
+          <div key={`bullet-${lineIdx}`} className="flex gap-2 ml-2">
+            <span className="text-slate-700">•</span>
+            <span>{parseInlineFormatting(bulletMatch[1])}</span>
+          </div>
+        );
+        return;
+      }
+
+      // Regular text with inline formatting
+      result.push(
+        <div key={`line-${lineIdx}`} className="mb-1">
+          {parseInlineFormatting(line)}
+        </div>
+      );
+    });
+
+    return result;
+  };
+
+  return <div className="space-y-1">{parseMarkdown(content)}</div>;
+};
+
 const footerLinks = {
   foreign: 'https://www.mofa.gov.vn',
   justice: 'https://moj.gov.vn',
@@ -437,23 +508,15 @@ const App = () => {
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 shadow-inner">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm whitespace-pre-wrap break-words ${
+                <div className={`max-w-[85%] p-3.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user'
                   ? 'bg-blue-600 text-white rounded-tr-none'
                   : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
                 }`}>
-                  {/* Parse and format warning messages */}
-                  {msg.content && msg.content.includes('⚠️') ? (
-                    <div>
-                      {msg.content.split('⚠️').map((part, idx) => (
-                        <div key={idx}>
-                          {idx > 0 && <div className="text-yellow-600 font-semibold mt-2 italic">⚠️ {part.trim()}</div>}
-                          {idx === 0 && part}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
+                  {msg.role === 'user' ? (
                     msg.content
+                  ) : (
+                    <MarkdownMessage content={msg.content} />
                   )}
                 </div>
               </div>
