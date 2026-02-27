@@ -8,8 +8,7 @@ export const islandsGeo = {
         name: "Đảo Hoàng Sa (Pattle)",
         note: "Đảo chính quần đảo Hoàng Sa, có trạm khí tượng do Pháp xây từ 1938",
         category: "hoang_sa",
-        area: "0.3 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép từ 1974"
+        area: "0.3 km²"
       },
       geometry: { type: "Point", coordinates: [111.6, 16.53] }
     },
@@ -19,8 +18,7 @@ export const islandsGeo = {
         name: "Đảo Phú Lâm (Woody)",
         note: "Đảo lớn nhất Hoàng Sa, TQ xây dựng trái phép sân bay và cơ sở quân sự",
         category: "hoang_sa",
-        area: "2.1 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép từ 1956"
+        area: "2.1 km²"
       },
       geometry: { type: "Point", coordinates: [112.33, 16.83] }
     },
@@ -30,8 +28,7 @@ export const islandsGeo = {
         name: "Đảo Lincoln",
         note: "Đảo thuộc nhóm An Vĩnh, quần đảo Hoàng Sa",
         category: "hoang_sa",
-        area: "0.15 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép"
+        area: "0.15 km²"
       },
       geometry: { type: "Point", coordinates: [112.73, 16.67] }
     },
@@ -41,8 +38,7 @@ export const islandsGeo = {
         name: "Đảo Tri Tôn (Triton)",
         note: "Đảo cực tây nam Hoàng Sa, nơi xảy ra Hải chiến Hoàng Sa 1974",
         category: "hoang_sa",
-        area: "0.12 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép từ 1974"
+        area: "0.12 km²"
       },
       geometry: { type: "Point", coordinates: [111.2, 15.78] }
     },
@@ -52,8 +48,7 @@ export const islandsGeo = {
         name: "Đảo Quang Hòa (Duncan)",
         note: "Đảo nơi diễn ra trận chiến chính trong Hải chiến Hoàng Sa 19/1/1974",
         category: "hoang_sa",
-        area: "0.48 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép từ 1974"
+        area: "0.48 km²"
       },
       geometry: { type: "Point", coordinates: [111.72, 15.8] }
     },
@@ -63,8 +58,7 @@ export const islandsGeo = {
         name: "Đảo Duy Mộng (Drummond)",
         note: "Đảo thuộc nhóm Lưỡi Liềm, quần đảo Hoàng Sa",
         category: "hoang_sa",
-        area: "0.41 km²",
-        status: "Bị Trung Quốc chiếm đóng trái phép"
+        area: "0.41 km²"
       },
       geometry: { type: "Point", coordinates: [111.78, 16.47] }
     },
@@ -241,7 +235,7 @@ export const islandsGeo = {
 };
 
 export const islandCategories = {
-  hoang_sa: { label: "Quần đảo Hoàng Sa", color: "#dc2626", description: "Bị Trung Quốc chiếm đóng trái phép" },
+  hoang_sa: { label: "Quần đảo Hoàng Sa", color: "#dc2626", description: "    trái phép" },
   truong_sa: { label: "Quần đảo Trường Sa", color: "#ea580c", description: "Việt Nam thực thi chủ quyền" },
   ven_bo: { label: "Đảo ven bờ", color: "#16a34a", description: "Hệ thống đảo ven bờ biển Việt Nam" }
 };

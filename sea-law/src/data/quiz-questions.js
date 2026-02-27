@@ -108,7 +108,7 @@ export const quizQuestions = [
     question: "Hải chiến Hoàng Sa giữa Việt Nam và Trung Quốc xảy ra vào năm nào?",
     options: ["1972", "1974", "1976", "1979"],
     correct: 1,
-    explanation: "Hải chiến Hoàng Sa xảy ra ngày 19/1/1974, Trung Quốc dùng vũ lực cưỡng chiếm Hoàng Sa từ VNCH.",
+    explanation: "Hải chiến Hoàng Sa xảy ra ngày 19/1/1974, Trung Quốc dùng vũ lực cưỡng    Hoàng Sa từ VNCH.",
     difficulty: "easy",
     category: "lich_su"
   },

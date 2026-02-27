@@ -72,7 +72,7 @@ export const timelineEvents = [
   {
     year: "19/1/1974",
     title: "Hải chiến Hoàng Sa",
-    description: "Trung Quốc dùng vũ lực cưỡng chiếm quần đảo Hoàng Sa từ Việt Nam Cộng hòa. 74 chiến sĩ Hải quân VNCH hy sinh bảo vệ chủ quyền Tổ quốc.",
+    description: "Trung Quốc dùng vũ lực cưỡng    quần đảo Hoàng Sa từ Việt Nam Cộng hòa. 74 chiến sĩ Hải quân VNCH hy sinh bảo vệ chủ quyền Tổ quốc.",
     era: "modern",
     source: "Hồ sơ Hải chiến Hoàng Sa 1974"
   },
