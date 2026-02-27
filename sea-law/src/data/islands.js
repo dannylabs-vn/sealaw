@@ -8,7 +8,8 @@ export const islandsGeo = {
         name: "Đảo Hoàng Sa (Pattle)",
         note: "Đảo chính quần đảo Hoàng Sa, có trạm khí tượng do Pháp xây từ 1938",
         category: "hoang_sa",
-        area: "0.3 km²"
+        area: "0.3 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [111.6, 16.53] }
     },
@@ -18,7 +19,8 @@ export const islandsGeo = {
         name: "Đảo Phú Lâm (Woody)",
         note: "Đảo lớn nhất Hoàng Sa, TQ xây dựng trái phép sân bay và cơ sở quân sự",
         category: "hoang_sa",
-        area: "2.1 km²"
+        area: "2.1 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [112.33, 16.83] }
     },
@@ -28,7 +30,8 @@ export const islandsGeo = {
         name: "Đảo Lincoln",
         note: "Đảo thuộc nhóm An Vĩnh, quần đảo Hoàng Sa",
         category: "hoang_sa",
-        area: "0.15 km²"
+        area: "0.15 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [112.73, 16.67] }
     },
@@ -38,7 +41,8 @@ export const islandsGeo = {
         name: "Đảo Tri Tôn (Triton)",
         note: "Đảo cực tây nam Hoàng Sa, nơi xảy ra Hải chiến Hoàng Sa 1974",
         category: "hoang_sa",
-        area: "0.12 km²"
+        area: "0.12 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [111.2, 15.78] }
     },
@@ -48,7 +52,8 @@ export const islandsGeo = {
         name: "Đảo Quang Hòa (Duncan)",
         note: "Đảo nơi diễn ra trận chiến chính trong Hải chiến Hoàng Sa 19/1/1974",
         category: "hoang_sa",
-        area: "0.48 km²"
+        area: "0.48 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [111.72, 15.8] }
     },
@@ -58,7 +63,8 @@ export const islandsGeo = {
         name: "Đảo Duy Mộng (Drummond)",
         note: "Đảo thuộc nhóm Lưỡi Liềm, quần đảo Hoàng Sa",
         category: "hoang_sa",
-        area: "0.41 km²"
+        area: "0.41 km²",
+        status: "Việt Nam quản lý"
       },
       geometry: { type: "Point", coordinates: [111.78, 16.47] }
     },
