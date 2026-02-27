@@ -15,10 +15,10 @@ const NewsPage = lazy(() => import('./pages/NewsPage'));
 
 function LoadingFallback() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Đang tải...</p>
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-slate-500 text-sm font-medium">Đang tải...</p>
       </div>
     </div>
   );
