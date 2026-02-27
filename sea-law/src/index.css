@@ -1,14 +1,29 @@
-/* Tailwind CSS được load từ CDN */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@import "tailwindcss";
+
+@theme {
+  --color-ocean-50: #e6f7ff;
+  --color-ocean-100: #b3e6ff;
+  --color-ocean-200: #80d4ff;
+  --color-ocean-300: #4dc3ff;
+  --color-ocean-400: #1ab2ff;
+  --color-ocean-500: #0099e6;
+  --color-ocean-600: #0077b3;
+  --color-ocean-700: #005580;
+  --color-ocean-800: #00334d;
+  --color-ocean-900: #001a2e;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .leaflet-custom-label,
+  .leaflet-region-label {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
 }
